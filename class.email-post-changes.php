@@ -245,10 +245,15 @@ class Email_Post_Changes {
 	function phpmailer_init( &$phpmailer ) {
 		$phpmailer->AltBody = $this->text_diff;
 
-		$phpmailer->AddReplyTo(
-			get_the_author_meta( 'email', $this->right_post->post_author ),
-			get_the_author_meta( 'display_name', $this->right_post->post_author )
-		);
+		$author_email = get_the_author_meta( 'email', $this->right_post->post_author );
+		$author_name  = get_the_author_meta( 'display_name', $this->right_post->post_author );
+
+		if ( ! empty( $author_email ) && ! empty( $author_name ) ) {
+			$phpmailer->AddReplyTo(
+				$author_email,
+				$author_name
+			);
+		}
 	}
 
 	function get_post_type_label( $post_type ) {
