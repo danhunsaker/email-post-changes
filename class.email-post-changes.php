@@ -227,11 +227,13 @@ class Email_Post_Changes {
 			}
 
 			$this->text_diff = $text_diff = rtrim( $text_diff );
+			$boundary = md5( $text_diff ) . ':' . md5( $html_diff );
 
 			wp_mail(
 				$email,
 				sprintf( __( '[%s] %s changed: %s' ), $blogname, $post_type, $title ),
-				$html_diff
+				"--{$boundary}\r\nContent-Type: text/plain\r\n\r\n{$text_diff}\r\n--{$boundary}\r\nContent-Type: text/html\r\n\r\n{$html_diff}\r\n--{$boundary}--",
+				"Content-Type: multipart/alternative; boundary=\"{$boundary}\""
 			);
 
 			do_action( 'email_post_changes_after_email_sent', $email );
